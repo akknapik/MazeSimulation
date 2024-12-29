@@ -1,14 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.akknapik.mazesimulator.MazeSimulatorController">
-            prefHeight="400.0" prefWidth="600.0">
-
-</AnchorPane>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.akknapik.mazesimulator.MazeSimulatorController">
+    <center>
+        <Pane fx:id="mazeContainer" prefHeight="800.0" prefWidth="800.0">
+            <children>
+                <Separator layoutX="60.0" prefHeight="5.0" prefWidth="1800.0" />
+            <Canvas fx:id="mazeCanvas" height="800.0" layoutX="560.0" visible="false" width="800.0" />
+            <Label fx:id="footerStatusText" layoutX="379.0" layoutY="196.0" text="Select the beginning and end (RMB on the selected maze cell)">
+               <font>
+                  <Font name="Arial Black" size="36.0" />
+               </font>
+            </Label>
+            <Label fx:id="footerText" layoutX="576.0" layoutY="240.0" text="First click - start, second click - end (end can be only on border)">
+               <font>
+                  <Font name="Arial Black" size="24.0" />
+               </font>
+            </Label>
+            <Button fx:id="bOK" layoutX="898.0" layoutY="352.0" mnemonicParsing="false" onAction="#changeVisibleScene" text="OK">
+               <font>
+                  <Font name="Arial Black" size="36.0" />
+               </font>
+            </Button>
+            </children>
+        </Pane>
+    </center>
+    <top>
+        <Pane prefHeight="125.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label layoutX="816.0" layoutY="37.0" text="MAZE SIMULATOR" textAlignment="CENTER" textOverrun="CLIP">
+                    <font>
+                        <Font name="ArtifaktElement-Heavy" size="36.0" />
+                    </font>
+                </Label>
+            </children>
+        </Pane>
+    </top>
+   <bottom>
+      <Pane fx:id="footer" prefHeight="105.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="bBack" layoutX="23.0" layoutY="28.0" mnemonicParsing="false" onAction="#backToAlgorithms" text="Back to Generation Algorithms" visible="false">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+            <Button fx:id="bRegenerate" layoutX="402.0" layoutY="28.0" mnemonicParsing="false" onAction="#regenerate" text="Regenerate" visible="false">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+            <Label fx:id="lSelectAlgorithm" layoutX="749.0" layoutY="11.0" text="Select an algorithm to solve the maze:" visible="false">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <ChoiceBox fx:id="chbAlgorithm" layoutX="817.0" layoutY="54.0" prefWidth="300.0" visible="false" />
+            <Button fx:id="bStart" layoutX="1250.0" layoutY="33.0" mnemonicParsing="false" text="Start" visible="false">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button fx:id="bStop" layoutX="1350.0" layoutY="33.0" mnemonicParsing="false" text="Stop" visible="false">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button fx:id="bReset" layoutX="1450.0" layoutY="33.0" mnemonicParsing="false" text="Reset" visible="false">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Slider fx:id="sSlider" layoutX="1575.0" layoutY="38.0" prefHeight="32.0" prefWidth="287.0" showTickLabels="true" value="50.0" visible="false" />
+            <Label fx:id="footerStatusText1" layoutX="339.0" layoutY="-2.0" text="Select the beginning and end (RMB on the selected maze cell)" visible="false">
+               <font>
+                  <Font name="Arial Black" size="36.0" />
+               </font>
+            </Label>
+            <Label fx:id="footerText1" layoutX="536.0" layoutY="42.0" text="First click - start, second click - end (end can be only on border)" visible="false">
+               <font>
+                  <Font name="Arial Black" size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+   </bottom>
+</BorderPane>
