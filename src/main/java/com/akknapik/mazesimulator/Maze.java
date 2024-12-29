@@ -6,8 +6,8 @@ public class Maze {
     private Cell[][] grid;
     private MazeGeneratorStrategy mazeGeneratorStrategy;
 
-    public Maze(int x, int y, MazeGeneratorStrategy mazeGeneratorStrategy) {
-        this.grid = new Cell[x][y];
+    public Maze(int x, MazeGeneratorStrategy mazeGeneratorStrategy) {
+        this.grid = new Cell[x][x];
         this.mazeGeneratorStrategy = mazeGeneratorStrategy;
         initializeGrid();
     }
@@ -26,5 +26,9 @@ public class Maze {
 
     public Cell[][] getGrid() {
         return grid;
+    }
+
+    public int getLength() {
+        return grid.length;
     }
 }

@@ -8,6 +8,8 @@ public class Cell {
     private boolean left = true;
     private boolean right = true;
     private boolean bottom = true;
+    private boolean start = false;
+    private boolean end = false;
 
     public Cell(int x, int y) {
         this.x = x;
@@ -32,6 +34,14 @@ public class Cell {
 
     public void setBottom(boolean bottom) {
         this.bottom = bottom;
+    }
+
+    public void setStart(boolean start) {
+        this.start = start;
+    }
+
+    public void setEnd(boolean end) {
+        this.end = end;
     }
 
     public int getX() {
@@ -60,5 +70,13 @@ public class Cell {
 
     public boolean isBottom() {
         return bottom;
+    }
+
+    public boolean isStart() {
+        return start;
+    }
+
+    public boolean isEnd() {
+        return end;
     }
 }
