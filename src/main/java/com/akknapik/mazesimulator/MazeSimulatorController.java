@@ -1,5 +1,7 @@
 package com.akknapik.mazesimulator;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,14 +9,18 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.List;
 
 public class MazeSimulatorController {
 
@@ -188,6 +194,18 @@ public class MazeSimulatorController {
         stage.show();
     }
 
+    public void startSolver() {
+        MazeSolver solver = new MazeSolver(maze);
+        solver.solveUntilCorrect();
+
+        List<MazeSolution> allSolutions = solver.getAllSolutions();
+        MazeSolution correctSolution = solver.getCorrectSolution();
+
+        maze.getStartCell();
+        maze.getEndCell();
+        animateSolutions(allSolutions);
+    }
+
     private boolean validateMazeSize() {
         String input = selectMazeSize.getText();
         try {
@@ -234,8 +252,8 @@ public class MazeSimulatorController {
         footerStatusText.setVisible(false);
         updateFooter();
         mazeSelector = new MazeSelector();
-        mazePane = mazeSelector.createMazePane(mazeCanvas, maze);
-
+        mazePane = mazeSelector.createMazePane(mazeCanvas);
+        maze = mazeSelector.getMaze();
         mazeContainer.getChildren().add(mazePane);
 
         mazeSelector.setOnStartSelected(() -> {
@@ -256,8 +274,8 @@ public class MazeSimulatorController {
 
         mazeContainer.getChildren().clear();
 
-        mazePane = mazeSelector.createMazePane(mazeCanvas, maze);
-
+        mazePane = mazeSelector.createMazePane(mazeCanvas);
+        maze = mazeSelector.getMaze();
         mazeContainer.getChildren().add(mazePane);
 
         mazeSelector.setOnStartSelected(() -> {
@@ -270,4 +288,48 @@ public class MazeSimulatorController {
             updateFooter();
         });
     }
+
+    public void animateSolutions(List<MazeSolution> allSolutions) {
+        GraphicsContext gc = mazeCanvas.getGraphicsContext2D();
+        double cellWidth = 800 / maze.getGrid().length;
+        double cellHeight = 800 / maze.getGrid().length;
+        double squareSize = (800 / maze.getGrid().length) * 0.6;
+
+        Timeline timeline = new Timeline();
+
+        for (int i = 0; i < allSolutions.size(); i++) {
+            MazeSolution solution = allSolutions.get(i);
+            List<Cell> path = solution.getPath();
+            boolean isCorrect = solution.isSolved();
+
+            for (int j = 0; j < path.size(); j++) {
+                Cell cell = path.get(j);
+                double x = cell.getY() * cellWidth + (cellWidth - squareSize) / 2;
+                double y = cell.getX() * cellHeight + (cellHeight - squareSize) / 2;
+
+                double darknessFactor = 1 - (j / (double) path.size());
+                Color fillColor = Color.color(0, darknessFactor, 0);
+
+                double blueDarknessFactor = 1 - (j / (double) path.size());
+                Color fillColor2 = Color.color(1, 0, blueDarknessFactor);
+
+                KeyFrame frame = new KeyFrame(Duration.millis(i * 100 + j * 10), e -> {
+                    gc.setFill(isCorrect ? fillColor2 : fillColor);
+                    gc.fillRect(x, y, squareSize, squareSize);
+                });
+
+                timeline.getKeyFrames().add(frame);
+            }
+        }
+
+        timeline.play();
+    }
+
+
+
+
+
+
+
+
 }

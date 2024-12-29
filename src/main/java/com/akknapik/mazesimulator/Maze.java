@@ -2,6 +2,9 @@ package com.akknapik.mazesimulator;
 
 import com.akknapik.mazesimulator.MazeGenerateStrategy.MazeGeneratorStrategy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Maze {
     private Cell[][] grid;
     private MazeGeneratorStrategy mazeGeneratorStrategy;
@@ -30,5 +33,63 @@ public class Maze {
 
     public int getLength() {
         return grid.length;
+    }
+
+    public List<Cell> getNeighbors(Cell current) {
+        List<Cell> neighbors = new ArrayList<>();
+        int x = current.getX();
+        int y = current.getY();
+
+        if (!current.isTop() && isInBorder(x - 1, y)) {
+            neighbors.add(getCell(x - 1, y));
+        }
+
+        if (!current.isRight() && isInBorder(x, y + 1)) {
+            neighbors.add(getCell(x, y + 1));
+        }
+
+        if (!current.isBottom() && isInBorder(x + 1, y)) {
+            neighbors.add(getCell(x + 1, y));
+        }
+
+        if (!current.isLeft() && isInBorder(x, y - 1)) {
+            neighbors.add(getCell(x, y - 1));
+        }
+
+        return neighbors;
+    }
+
+    private boolean isInBorder(int x, int y) {
+        return x >= 0 && x < grid.length && y >= 0 && y < grid[0].length;
+    }
+
+    private Cell getCell(int x, int y) {
+        return grid[x][y];
+    }
+
+    public Cell getStartCell() {
+        for(Cell[] cells : grid) {
+            for(Cell cell : cells) {
+                if(cell.isStart()){
+                    System.out.println(cell.getX() + " start " + cell.getY());
+
+                    return cell;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Cell getEndCell() {
+        for(Cell[] cells : grid) {
+            for(Cell cell : cells) {
+                if(cell.isEnd()){
+                    System.out.println(cell.getX() + " end " + cell.getY());
+
+                    return cell;
+                }
+            }
+        }
+        return null;
     }
 }

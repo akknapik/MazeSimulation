@@ -16,11 +16,12 @@ public class MazeSelector {
     private Cell endCell = null;
     private Runnable onStartSelected;
     private Runnable onEndSelected;
+    private Maze maze;
 
-    public Pane createMazePane(Canvas canvas, Maze maze) {
+    public Pane createMazePane(Canvas canvas) {
         startCell = null;
         endCell = null;
-        maze = new Maze(10,  new DFSMazeGenerator());
+        maze = new Maze(15, new DFSMazeGenerator());
         maze.generateMaze();
         MazeDisplay.displayMaze(maze.getGrid());
 
@@ -43,7 +44,7 @@ public class MazeSelector {
         });
 
         Pane root = new Pane(canvas);
-        root.setPrefSize(800, 800); // Ustawienie preferowanego rozmiaru kontenera
+        root.setPrefSize(800, 800);
 
         return root;
     }
@@ -110,23 +111,7 @@ public class MazeSelector {
         return row == 0 || row == rows - 1 || col == 0 || col == cols - 1;
     }
 
-
-    private Cell[][] generateDummyGrid(int rows, int cols) {
-        Cell[][] grid = new Cell[rows][cols];
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                grid[row][col] = new Cell(row, col);
-            }
-        }
-
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                grid[row][col].setTop(true);
-                grid[row][col].setLeft(true);
-                grid[row][col].setBottom(true);
-                grid[row][col].setRight(true);
-            }
-        }
-        return grid;
+    public Maze getMaze() {
+        return maze;
     }
 }
