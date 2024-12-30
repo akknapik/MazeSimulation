@@ -1,17 +1,17 @@
 package com.akknapik.mazesimulator;
 
-import com.akknapik.mazesimulator.MazeGenerateStrategy.MazeGeneratorStrategy;
+import com.akknapik.mazesimulator.MazeGenerateStrategy.IMazeGeneratorStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Maze {
     private Cell[][] grid;
-    private MazeGeneratorStrategy mazeGeneratorStrategy;
+    private IMazeGeneratorStrategy IMazeGeneratorStrategy;
 
-    public Maze(int x, MazeGeneratorStrategy mazeGeneratorStrategy) {
+    public Maze(int x, IMazeGeneratorStrategy IMazeGeneratorStrategy) {
         this.grid = new Cell[x][x];
-        this.mazeGeneratorStrategy = mazeGeneratorStrategy;
+        this.IMazeGeneratorStrategy = IMazeGeneratorStrategy;
         initializeGrid();
     }
 
@@ -24,7 +24,7 @@ public class Maze {
     }
 
     public void generateMaze() {
-        mazeGeneratorStrategy.generateMaze(grid);
+        IMazeGeneratorStrategy.generateMaze(grid);
     }
 
     public Cell[][] getGrid() {
@@ -71,8 +71,6 @@ public class Maze {
         for(Cell[] cells : grid) {
             for(Cell cell : cells) {
                 if(cell.isStart()){
-                    System.out.println(cell.getX() + " start " + cell.getY());
-
                     return cell;
                 }
             }
@@ -84,12 +82,21 @@ public class Maze {
         for(Cell[] cells : grid) {
             for(Cell cell : cells) {
                 if(cell.isEnd()){
-                    System.out.println(cell.getX() + " end " + cell.getY());
-
                     return cell;
                 }
             }
         }
         return null;
+    }
+
+    public void deleteStartAndEnd() {
+        for(Cell[] cells : grid) {
+            for(Cell cell : cells) {
+                if(cell.isEnd() || cell.isStart()){
+                    cell.setEnd(false);
+                    cell.setStart(false);
+                }
+            }
+        }
     }
 }

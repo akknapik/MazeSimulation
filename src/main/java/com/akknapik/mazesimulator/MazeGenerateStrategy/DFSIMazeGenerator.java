@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
-public class DFSMazeGenerator implements MazeGeneratorStrategy{
+public class DFSIMazeGenerator implements IMazeGeneratorStrategy {
     @Override
     public void generateMaze(Cell[][] grid) {
         Stack<Cell> stack = new Stack<>();

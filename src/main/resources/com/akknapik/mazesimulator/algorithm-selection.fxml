@@ -63,7 +63,7 @@
             <Font name="Arial Black" size="24.0" />
           </font>
         </Label>
-        <TextField fx:id="selectMazeSize" layoutX="157.0" layoutY="606.0" promptText="max. 100">
+        <TextField fx:id="selectMazeSize" layoutX="140.0" layoutY="609.0" prefHeight="39.0" prefWidth="267.0" promptText="Preferably not more than 20.">
                <font>
                   <Font size="18.0" />
                </font></TextField>

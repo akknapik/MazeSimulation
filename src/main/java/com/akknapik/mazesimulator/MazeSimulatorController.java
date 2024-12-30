@@ -1,5 +1,7 @@
 package com.akknapik.mazesimulator;
 
+import com.akknapik.mazesimulator.MazeGenerateStrategy.MazeGeneratorFactory;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -89,14 +91,17 @@ public class MazeSimulatorController {
     private ChoiceBox chbAlgorithm;
 
     @FXML
-    private Slider sSlider;
+    private Button bStartEnd;
 
-    private String typeOfGeneratorAlgorithm;
+    public String typeOfGeneratorAlgorithm;
     private boolean startSelected = false;
     private boolean endSelected = false;
     private boolean firstOK = true;
     private Maze maze;
-    private int sizeOfMaze;
+    public int sizeOfMaze;
+    private MazeGeneratorFactory mazeGeneratorFactory = new MazeGeneratorFactory();
+    private Timeline timeline;
+    private boolean changed = false;
 
     @FXML
     public void initialize(ActionEvent event) throws IOException {
@@ -116,7 +121,7 @@ public class MazeSimulatorController {
             bStart.setVisible(false);
             bStop.setVisible(false);
             bReset.setVisible(false);
-            sSlider.setVisible(false);
+            bStartEnd.setVisible(false);
         } else {
             footerStatusText1.setVisible(false);
             footerText1.setVisible(false);
@@ -129,7 +134,7 @@ public class MazeSimulatorController {
             bStart.setVisible(true);
             bStop.setVisible(true);
             bReset.setVisible(true);
-            sSlider.setVisible(true);
+            bStartEnd.setVisible(true);
         }
     }
 
@@ -176,8 +181,19 @@ public class MazeSimulatorController {
         }
 
         if(validateTypeOfGeneratorAlgorithm() && validateMazeSize()) {
+            sizeOfMaze = Integer.parseInt(selectMazeSize.getText());
+            MazeData mazeData = new MazeData(sizeOfMaze, typeOfGeneratorAlgorithm);
+
+            Node node = (Node) event.getSource();
+            Stage tempStage = (Stage) node.getScene().getWindow();
+            tempStage.close();
+
+            System.out.println(sizeOfMaze + " " + typeOfGeneratorAlgorithm);
+
             clearError();
             root = FXMLLoader.load(getClass().getResource("maze-simulator.fxml"));
+            DataRelay dataRelay = DataRelay.getInstance();
+            dataRelay.setMazeData(mazeData);
             stage = (Stage)((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
@@ -210,10 +226,10 @@ public class MazeSimulatorController {
         String input = selectMazeSize.getText();
         try {
             sizeOfMaze = Integer.parseInt(input);
-            if (sizeOfMaze <= 0) {
-                showError("Maze size must be a positive integer.");
+            if (sizeOfMaze <= 1) {
+                showError("Maze size must be greater than 1.");
                 return false;
-            } else if (sizeOfMaze > 100){
+            } else if (sizeOfMaze > 25){
                 showError("Maze size can't be greater than 100.");
                 return false;
             }
@@ -251,30 +267,45 @@ public class MazeSimulatorController {
         footerText.setVisible(false);
         footerStatusText.setVisible(false);
         updateFooter();
+
+        DataRelay dataRelay = DataRelay.getInstance();
+        MazeData mazeData = dataRelay.getMazeData();
+
         mazeSelector = new MazeSelector();
-        mazePane = mazeSelector.createMazePane(mazeCanvas);
-        maze = mazeSelector.getMaze();
-        mazeContainer.getChildren().add(mazePane);
+        mazePane = mazeSelector.createMazePane(mazeCanvas, mazeData.getSizeOfMaze(),
+                mazeGeneratorFactory.createStrategy(mazeData.getTypeOfAlgorithmGeneration()));
+        chooseStartAndEnd();
 
-        mazeSelector.setOnStartSelected(() -> {
-            startSelected = true;
-            updateFooter();
-        });
-
-        mazeSelector.setOnEndSelected(() -> {
-            endSelected = true;
-            updateFooter();
-        });
     }
 
     public void regenerate() {
+        resetSolutions();
+
         endSelected = false;
         startSelected = false;
         updateFooter();
 
         mazeContainer.getChildren().clear();
 
-        mazePane = mazeSelector.createMazePane(mazeCanvas);
+        DataRelay dataRelay = DataRelay.getInstance();
+        MazeData mazeData = dataRelay.getMazeData();
+
+        //mazeSelector = new MazeSelector();
+        mazePane = mazeSelector.createMazePane(mazeCanvas, mazeData.getSizeOfMaze(),
+                mazeGeneratorFactory.createStrategy(mazeData.getTypeOfAlgorithmGeneration()));
+        chooseStartAndEnd();
+    }
+
+    public void chooseStartAndEnd() {
+        if(maze != null) {
+            resetSolutions();
+        }
+        startSelected = false;
+        endSelected = false;
+
+        updateFooter();
+
+        mazePane = mazeSelector.changeStartEnd(mazeCanvas, mazeSelector.getMaze());
         maze = mazeSelector.getMaze();
         mazeContainer.getChildren().add(mazePane);
 
@@ -286,6 +317,7 @@ public class MazeSimulatorController {
         mazeSelector.setOnEndSelected(() -> {
             endSelected = true;
             updateFooter();
+            changed = true;
         });
     }
 
@@ -295,40 +327,65 @@ public class MazeSimulatorController {
         double cellHeight = 800 / maze.getGrid().length;
         double squareSize = (800 / maze.getGrid().length) * 0.6;
 
-        Timeline timeline = new Timeline();
+        boolean resetNeeded = allSolutions.stream().anyMatch(MazeSolution::isSolved);
 
-        for (int i = 0; i < allSolutions.size(); i++) {
-            MazeSolution solution = allSolutions.get(i);
-            List<Cell> path = solution.getPath();
-            boolean isCorrect = solution.isSolved();
+        if (resetNeeded && timeline != null && timeline.getStatus() == Animation.Status.STOPPED) {
+            clearMaze();
+            timeline = null;
+        }
 
-            for (int j = 0; j < path.size(); j++) {
-                Cell cell = path.get(j);
-                double x = cell.getY() * cellWidth + (cellWidth - squareSize) / 2;
-                double y = cell.getX() * cellHeight + (cellHeight - squareSize) / 2;
+        if (timeline == null) {
+            timeline = new Timeline();
+            for (int i = 0; i < allSolutions.size(); i++) {
+                MazeSolution solution = allSolutions.get(i);
+                List<Cell> path = solution.getPath();
+                boolean isCorrect = solution.isSolved();
 
-                double darknessFactor = 1 - (j / (double) path.size());
-                Color fillColor = Color.color(0, darknessFactor, 0);
+                for (int j = 0; j < path.size(); j++) {
+                    Cell cell = path.get(j);
+                    double x = cell.getY() * cellWidth + (cellWidth - squareSize) / 2;
+                    double y = cell.getX() * cellHeight + (cellHeight - squareSize) / 2;
 
-                double blueDarknessFactor = 1 - (j / (double) path.size());
-                Color fillColor2 = Color.color(1, 0, blueDarknessFactor);
+                    Color fillColor = Color.color(0.1, 0.2, 0.2);
+                    Color fillColor2 = Color.color(0, 1, 0);
 
-                KeyFrame frame = new KeyFrame(Duration.millis(i * 100 + j * 10), e -> {
-                    gc.setFill(isCorrect ? fillColor2 : fillColor);
-                    gc.fillRect(x, y, squareSize, squareSize);
-                });
+                    int timeOffset = i * 100 + j * 10;
 
-                timeline.getKeyFrames().add(frame);
+                    KeyFrame frame = new KeyFrame(Duration.millis(timeOffset), e -> {
+                        gc.setFill(isCorrect ? fillColor2 : fillColor);
+                        gc.fillRect(x, y, squareSize, squareSize);
+                    });
+
+                    timeline.getKeyFrames().add(frame);
+                }
             }
         }
 
-        timeline.play();
+        if (timeline.getStatus() != Animation.Status.RUNNING) {
+            timeline.play();
+        }
     }
 
+    public void stopAnimation() {
+        if (timeline != null && timeline.getStatus() == Animation.Status.RUNNING) {
+            timeline.pause();
+        }
+    }
 
+    public void resetSolutions() {
+        clearMaze();
 
+        if (timeline != null && timeline.getStatus() != Animation.Status.STOPPED) {
+            timeline.stop();
+            timeline = null;
+        }
+    }
 
-
+    public void clearMaze() {
+        mazePane = mazeSelector.resetMaze(mazeCanvas, maze);
+        maze = mazeSelector.getMaze();
+        mazeContainer.getChildren().add(mazePane);
+    }
 
 
 

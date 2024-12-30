@@ -5,7 +5,6 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
@@ -16,7 +15,7 @@
             <children>
                 <Separator layoutX="60.0" prefHeight="5.0" prefWidth="1800.0" />
             <Canvas fx:id="mazeCanvas" height="800.0" layoutX="560.0" visible="false" width="800.0" />
-            <Label fx:id="footerStatusText" layoutX="379.0" layoutY="196.0" text="Select the beginning and end (RMB on the selected maze cell)">
+            <Label fx:id="footerStatusText" layoutX="363.0" layoutY="180.0" text="Select the beginning and the end (RMB on the selected maze cell)">
                <font>
                   <Font name="Arial Black" size="36.0" />
                </font>
@@ -69,17 +68,16 @@
                   <Font size="18.0" />
                </font>
             </Button>
-            <Button fx:id="bStop" layoutX="1350.0" layoutY="33.0" mnemonicParsing="false" text="Stop" visible="false">
+            <Button fx:id="bStop" layoutX="1350.0" layoutY="33.0" mnemonicParsing="false" onAction="#stopAnimation" text="Stop" visible="false">
                <font>
                   <Font size="18.0" />
                </font>
             </Button>
-            <Button fx:id="bReset" layoutX="1450.0" layoutY="33.0" mnemonicParsing="false" text="Reset" visible="false">
+            <Button fx:id="bReset" layoutX="1450.0" layoutY="33.0" mnemonicParsing="false" onAction="#resetSolutions" text="Reset" visible="false">
                <font>
                   <Font size="18.0" />
                </font>
             </Button>
-            <Slider fx:id="sSlider" layoutX="1575.0" layoutY="38.0" prefHeight="32.0" prefWidth="287.0" showTickLabels="true" value="50.0" visible="false" />
             <Label fx:id="footerStatusText1" layoutX="339.0" layoutY="-2.0" text="Select the beginning and end (RMB on the selected maze cell)" visible="false">
                <font>
                   <Font name="Arial Black" size="36.0" />
@@ -90,6 +88,11 @@
                   <Font name="Arial Black" size="24.0" />
                </font>
             </Label>
+            <Button fx:id="bStartEnd" layoutX="1575.0" layoutY="31.0" mnemonicParsing="false" onAction="#chooseStartAndEnd" prefHeight="46.0" prefWidth="288.0" text="Choose the beginning and the end again." visible="false">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
          </children>
       </Pane>
    </bottom>

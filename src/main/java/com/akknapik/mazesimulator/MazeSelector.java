@@ -1,6 +1,7 @@
 package com.akknapik.mazesimulator;
 
-import com.akknapik.mazesimulator.MazeGenerateStrategy.DFSMazeGenerator;
+import com.akknapik.mazesimulator.MazeGenerateStrategy.DFSIMazeGenerator;
+import com.akknapik.mazesimulator.MazeGenerateStrategy.IMazeGeneratorStrategy;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -17,11 +18,12 @@ public class MazeSelector {
     private Runnable onStartSelected;
     private Runnable onEndSelected;
     private Maze maze;
+    private Pane root;
 
-    public Pane createMazePane(Canvas canvas) {
+    public Pane createMazePane(Canvas canvas, int sizeOfMaze, IMazeGeneratorStrategy generatorStrategy) {
         startCell = null;
         endCell = null;
-        maze = new Maze(15, new DFSMazeGenerator());
+        maze = new Maze(sizeOfMaze, generatorStrategy);
         maze.generateMaze();
         MazeDisplay.displayMaze(maze.getGrid());
 
@@ -33,17 +35,7 @@ public class MazeSelector {
 
         drawMaze(gc);
 
-        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            int col = (int) (e.getX() / cellSize);
-            int row = (int) (e.getY() / cellSize);
-
-            if (isValidCell(row, col)) {
-                handleMouseClick(row, col);
-                drawMaze(gc);
-            }
-        });
-
-        Pane root = new Pane(canvas);
+        root = new Pane(canvas);
         root.setPrefSize(800, 800);
 
         return root;
@@ -78,6 +70,8 @@ public class MazeSelector {
     private void drawMaze(GraphicsContext gc) {
         gc.clearRect(0, 0, cols * cellSize, rows * cellSize);
 
+        gc.setLineWidth(5);
+
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 Cell cell = grid[row][col];
@@ -101,6 +95,50 @@ public class MazeSelector {
                 }
             }
         }
+    }
+
+    public Pane changeStartEnd(Canvas canvas, Maze maze) {
+        startCell = null;
+        endCell = null;
+        maze.deleteStartAndEnd();
+
+        grid = maze.getGrid();
+        rows = maze.getLength();
+        cols = maze.getLength();
+        cellSize = 800 / maze.getLength();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        drawMaze(gc);
+
+        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            int col = (int) (e.getX() / cellSize);
+            int row = (int) (e.getY() / cellSize);
+
+            if (isValidCell(row, col)) {
+                handleMouseClick(row, col);
+                drawMaze(gc);
+            }
+        });
+
+        root = new Pane(canvas);
+        root.setPrefSize(800, 800);
+
+        return root;
+    }
+
+    public Pane resetMaze(Canvas canvas, Maze maze) {
+        grid = maze.getGrid();
+        rows = maze.getLength();
+        cols = maze.getLength();
+        cellSize = 800 / maze.getLength();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        drawMaze(gc);
+
+        root = new Pane(canvas);
+        root.setPrefSize(800, 800);
+
+        return root;
     }
 
     private boolean isValidCell(int row, int col) {
