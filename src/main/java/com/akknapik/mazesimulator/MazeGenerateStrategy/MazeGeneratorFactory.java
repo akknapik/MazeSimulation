@@ -10,6 +10,7 @@ public class MazeGeneratorFactory implements IMazeGeneratorFactory {
     public MazeGeneratorFactory() {
         registerStrategy("dfs", DFSMazeGenerator.class);
         registerStrategy("kruskal", KruskalMazeGenerator.class);
+        registerStrategy("aldousbroder", AldousBroderMazeGenerator.class);
 
     }
 

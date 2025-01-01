@@ -19,6 +19,19 @@ public class MazeGeneratorStrategy {
         return neighbors;
     }
 
+    public List<Cell> getNeighbors(Cell cell, Cell[][] grid) {
+        List<Cell> neighbors = new ArrayList<>();
+        int x = cell.getRow();
+        int y = cell.getCol();
+
+        if (x > 0) neighbors.add(grid[x - 1][y]);
+        if (x < grid.length - 1) neighbors.add(grid[x + 1][y]);
+        if (y > 0) neighbors.add(grid[x][y - 1]);
+        if (y < grid[0].length - 1) neighbors.add(grid[x][y + 1]);
+
+        return neighbors;
+    }
+
     public void removeWall(Cell current, Cell neighbor) {
         if(current.getRow() == neighbor.getRow()) {
             if(current.getCol() < neighbor.getCol()) {
