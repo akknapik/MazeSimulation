@@ -1,9 +1,12 @@
 package com.akknapik.mazesimulator;
 
+import com.akknapik.mazesimulator.State.IState;
+import com.akknapik.mazesimulator.State.UnvisitedState;
+
 public class Cell {
-    private int x;
-    private int y;
-    private boolean isVisited = false;
+    private int row;
+    private int col;
+    private IState isVisited = new UnvisitedState();
     private boolean top = true;
     private boolean left = true;
     private boolean right = true;
@@ -11,12 +14,12 @@ public class Cell {
     private boolean start = false;
     private boolean end = false;
 
-    public Cell(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Cell(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
 
-    public void setVisited(boolean visited) {
+    public void setVisited(IState visited) {
         this.isVisited = visited;
     }
 
@@ -44,15 +47,15 @@ public class Cell {
         this.end = end;
     }
 
-    public int getX() {
-        return x;
+    public int getRow() {
+        return row;
     }
 
-    public int getY() {
-        return y;
+    public int getCol() {
+        return col;
     }
 
-    public boolean isVisited() {
+    public IState getVisited() {
         return isVisited;
     }
 

@@ -343,8 +343,8 @@ public class MazeSimulatorController {
 
                 for (int j = 0; j < path.size(); j++) {
                     Cell cell = path.get(j);
-                    double x = cell.getY() * cellWidth + (cellWidth - squareSize) / 2;
-                    double y = cell.getX() * cellHeight + (cellHeight - squareSize) / 2;
+                    double x = cell.getCol() * cellWidth + (cellWidth - squareSize) / 2;
+                    double y = cell.getRow() * cellHeight + (cellHeight - squareSize) / 2;
 
                     Color fillColor = Color.color(0.1, 0.2, 0.2);
                     Color fillColor2 = Color.color(0, 1, 0);

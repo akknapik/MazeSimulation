@@ -37,8 +37,8 @@ public class Maze {
 
     public List<Cell> getNeighbors(Cell current) {
         List<Cell> neighbors = new ArrayList<>();
-        int x = current.getX();
-        int y = current.getY();
+        int x = current.getRow();
+        int y = current.getCol();
 
         if (!current.isTop() && isInBorder(x - 1, y)) {
             neighbors.add(getCell(x - 1, y));

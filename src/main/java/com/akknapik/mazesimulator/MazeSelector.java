@@ -1,6 +1,5 @@
 package com.akknapik.mazesimulator;
 
-import com.akknapik.mazesimulator.MazeGenerateStrategy.DFSIMazeGenerator;
 import com.akknapik.mazesimulator.MazeGenerateStrategy.IMazeGeneratorStrategy;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
