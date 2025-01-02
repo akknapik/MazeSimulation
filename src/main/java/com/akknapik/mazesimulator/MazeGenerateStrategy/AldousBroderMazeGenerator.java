@@ -11,11 +11,12 @@ import java.util.Random;
 public class AldousBroderMazeGenerator extends MazeGeneratorStrategy implements IMazeGeneratorStrategy{
     @Override
     public void generateMaze(Cell[][] grid) {
-        int sizeOfMaze = grid.length;
-        Cell current = grid[new Random().nextInt(sizeOfMaze)][new Random().nextInt(sizeOfMaze)];
+        int rows = grid.length;
+        int cols = grid[0].length;
+        Cell current = grid[new Random().nextInt(rows)][new Random().nextInt(cols)];
         current.setVisited(new VisitedState());
         int visitedCounter = 1;
-        int numberOfCells = sizeOfMaze * sizeOfMaze;
+        int numberOfCells = rows * cols;
 
         while (visitedCounter < numberOfCells) {
             List<Cell> neighbors = getNeighbors(current, grid);
@@ -26,7 +27,6 @@ public class AldousBroderMazeGenerator extends MazeGeneratorStrategy implements 
                 neighbor.setVisited(new VisitedState());
                 visitedCounter++;
             }
-            //visitedCounter++;
             current = neighbor;
         }
     }

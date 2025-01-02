@@ -14,6 +14,8 @@ public class Cell {
     private boolean start = false;
     private boolean end = false;
 
+    private int setID = -1; //use in Eller's algorithm
+
     public Cell(int row, int col) {
         this.row = row;
         this.col = col;
@@ -81,5 +83,13 @@ public class Cell {
 
     public boolean isEnd() {
         return end;
+    }
+
+    public int getSetID() {
+        return setID;
+    }
+
+    public void setSetID(int setID) {
+        this.setID = setID;
     }
 }

@@ -10,7 +10,7 @@ public class KruskalMazeGenerator extends MazeGeneratorStrategy implements IMaze
     @Override
     public void generateMaze(Cell[][] grid) {
         int rows = grid.length;
-        int cols = grid.length;
+        int cols = grid[0].length;
 
         List<Edge> edges = new ArrayList<>();
         int[][] parent = new int[rows][cols];

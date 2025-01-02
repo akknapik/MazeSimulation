@@ -34,7 +34,7 @@ public class MazeSimulatorController {
     private Scene scene;
 
     @FXML
-    private RadioButton rKruskal, rPrim, rDFS, rHaK, rEller, rAldousBroder, rGrowingTree, rBacktracking;
+    private RadioButton rKruskal, rPrim, rDFS, rHaK, rEller, rAldousBroder, rGrowingTree, rFractalTessellation;
 
     @FXML
     private TextField selectMazeSize;
@@ -154,7 +154,7 @@ public class MazeSimulatorController {
             descriptionText.getChildren().add(new Text("Aldous-Broder Algorithm: A maze generation algorithm that uses a random walk to ensure every cell is visited exactly once."));
         } else if (rGrowingTree.isSelected()) {
             descriptionText.getChildren().add(new Text("Growing Tree Algorithm: A maze generation algorithm that randomly selects cells from a growing list to carve paths."));
-        } else if (rBacktracking.isSelected()) {
+        } else if (rFractalTessellation.isSelected()) {
             descriptionText.getChildren().add(new Text("Backtracking Algorithm: A maze generation algorithm that builds paths by backtracking when a dead end is encountered."));
         }
     }
@@ -174,8 +174,8 @@ public class MazeSimulatorController {
             typeOfGeneratorAlgorithm = "aldousbroder";
         } else if (rGrowingTree.isSelected()) {
             typeOfGeneratorAlgorithm = "growingtree";
-        } else if (rBacktracking.isSelected()) {
-            typeOfGeneratorAlgorithm = "backtracking";
+        } else if (rFractalTessellation.isSelected()) {
+            typeOfGeneratorAlgorithm = "fractaltessellation";
         } else {
             typeOfGeneratorAlgorithm = null;
         }
@@ -199,7 +199,6 @@ public class MazeSimulatorController {
             stage.setScene(scene);
             stage.show();
         }
-
     }
 
     public void backToAlgorithms(ActionEvent event) throws IOException {

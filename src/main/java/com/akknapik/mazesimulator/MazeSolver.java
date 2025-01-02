@@ -21,9 +21,8 @@ public class MazeSolver {
         Cell endCell = maze.getEndCell();
 
         if (startCell == null || endCell == null) {
-            throw new IllegalArgumentException("Labirynt musi mieć start i koniec.");
+            throw new IllegalArgumentException("Maze have to has start and end.");
         }
-
         findPathsUntilCorrect(startCell, endCell, new HashSet<>(), new ArrayList<>());
     }
 

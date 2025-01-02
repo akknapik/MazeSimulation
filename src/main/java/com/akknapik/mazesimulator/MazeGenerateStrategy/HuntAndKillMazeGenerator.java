@@ -16,13 +16,9 @@ public class HuntAndKillMazeGenerator extends MazeGeneratorStrategy implements I
         current.setVisited(new VisitedState());
 
         while (true) {
-            System.out.println("while1");
-
             List<Cell> neighbors = getUnvisitedNeighbors(current, grid);
 
             while (!neighbors.isEmpty()) {
-                System.out.println("while2");
-
                 Cell neighbor = neighbors.get(new Random().nextInt(neighbors.size()));
                 removeWall(current, neighbor);
                 neighbor.setVisited(new VisitedState());
@@ -34,11 +30,7 @@ public class HuntAndKillMazeGenerator extends MazeGeneratorStrategy implements I
 
             outerFor:
             for (int row = 0; row < rows; row++) {
-                System.out.println("for1");
-
                 for (int col = 0; col < cols; col++) {
-                    System.out.println("for2");
-
                     Cell cell = grid[row][col];
                     if (!cell.getVisited().isVisited()) {
                         List<Cell> visitedNeighbors = getVisitedNeighbors(cell, grid);
@@ -58,7 +50,6 @@ public class HuntAndKillMazeGenerator extends MazeGeneratorStrategy implements I
                 break;
             }
         }
-        System.out.println("koniec");
     }
 }
 

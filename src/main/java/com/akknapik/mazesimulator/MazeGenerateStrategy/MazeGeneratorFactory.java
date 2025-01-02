@@ -11,7 +11,11 @@ public class MazeGeneratorFactory implements IMazeGeneratorFactory {
         registerStrategy("dfs", DFSMazeGenerator.class);
         registerStrategy("kruskal", KruskalMazeGenerator.class);
         registerStrategy("aldousbroder", AldousBroderMazeGenerator.class);
-
+        registerStrategy("prim", PrimMazeGenerator.class);
+        registerStrategy("hak", HuntAndKillMazeGenerator.class);
+        registerStrategy("eller", EllersMazeGenerator.class);
+        registerStrategy("growingtree", GrowingTreeMazeGenerator.class);
+        registerStrategy("fractaltessellation", FractalTessellationMazeGenerator.class);
     }
 
     public void registerStrategy(String type, Class<? extends IMazeGeneratorStrategy> strategy) {
@@ -28,13 +32,7 @@ public class MazeGeneratorFactory implements IMazeGeneratorFactory {
 
         try {
             return strategy.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
+        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
