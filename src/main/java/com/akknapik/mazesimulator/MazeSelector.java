@@ -24,7 +24,6 @@ public class MazeSelector {
         endCell = null;
         maze = new Maze(sizeOfMaze, generatorStrategy);
         maze.generateMaze();
-        MazeDisplay.displayMaze(maze.getGrid());
 
         grid = maze.getGrid();
         rows = maze.getLength();

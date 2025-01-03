@@ -12,7 +12,6 @@ public class MazeSolverFactory implements IMazeSolverFactory{
     public MazeSolverFactory() {
         registerStrategy("dfs", DFSMazeSolver.class);
         registerStrategy("bfs", BFSMazeSolver.class);
-        registerStrategy("righthand", RightHandSolver.class);
         //registerStrategy("", .class);
 
     }

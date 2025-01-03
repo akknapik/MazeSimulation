@@ -15,7 +15,7 @@ public class MazeGeneratorFactory implements IMazeGeneratorFactory {
         registerStrategy("hak", HuntAndKillMazeGenerator.class);
         registerStrategy("eller", EllersMazeGenerator.class);
         registerStrategy("growingtree", GrowingTreeMazeGenerator.class);
-        registerStrategy("fractaltessellation", FractalTessellationMazeGenerator.class);
+        registerStrategy("sidewinder", SidewinderMazeGenerator.class);
     }
 
     public void registerStrategy(String type, Class<? extends IMazeGeneratorStrategy> strategy) {

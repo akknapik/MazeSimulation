@@ -28,32 +28,32 @@
             <Font name="Arial Black" size="24.0" />
           </font>
         </RadioButton>
-        <RadioButton fx:id="rDFS" layoutX="80.0" layoutY="242.0" mnemonicParsing="false" text="DFS algorithm" toggleGroup="$generateAlgorithm">
+        <RadioButton fx:id="rDFS" layoutX="80.0" layoutY="242.0" mnemonicParsing="false" onAction="#printAlgorithmDescription" text="DFS algorithm" toggleGroup="$generateAlgorithm">
           <font>
             <Font name="Arial Black" size="24.0" />
           </font>
         </RadioButton>
-        <RadioButton fx:id="rHaK" layoutX="80.0" layoutY="292.0" mnemonicParsing="false" text="Hunt-and-Kill algorithm" toggleGroup="$generateAlgorithm">
+        <RadioButton fx:id="rHaK" layoutX="80.0" layoutY="292.0" mnemonicParsing="false" onAction="#printAlgorithmDescription" text="Hunt-and-Kill algorithm" toggleGroup="$generateAlgorithm">
           <font>
             <Font name="Arial Black" size="24.0" />
           </font>
         </RadioButton>
-        <RadioButton fx:id="rEller" layoutX="80.0" layoutY="342.0" mnemonicParsing="false" text="Eller's algorithm" toggleGroup="$generateAlgorithm">
+        <RadioButton fx:id="rEller" layoutX="80.0" layoutY="342.0" mnemonicParsing="false" onAction="#printAlgorithmDescription" text="Eller's algorithm" toggleGroup="$generateAlgorithm">
           <font>
             <Font name="Arial Black" size="24.0" />
           </font>
         </RadioButton>
-        <RadioButton fx:id="rAldousBroder" layoutX="80.0" layoutY="392.0" mnemonicParsing="false" text="Aldous-Broder algorithm" toggleGroup="$generateAlgorithm">
+        <RadioButton fx:id="rAldousBroder" layoutX="80.0" layoutY="392.0" mnemonicParsing="false" onAction="#printAlgorithmDescription" text="Aldous-Broder algorithm" toggleGroup="$generateAlgorithm">
           <font>
             <Font name="Arial Black" size="24.0" />
           </font>
         </RadioButton>
-        <RadioButton fx:id="rGrowingTree" layoutX="80.0" layoutY="442.0" mnemonicParsing="false" text="Growing Tree algorithm" toggleGroup="$generateAlgorithm">
+        <RadioButton fx:id="rGrowingTree" layoutX="80.0" layoutY="442.0" mnemonicParsing="false" onAction="#printAlgorithmDescription" text="Growing Tree algorithm" toggleGroup="$generateAlgorithm">
           <font>
             <Font name="Arial Black" size="24.0" />
           </font>
         </RadioButton>
-        <RadioButton fx:id="rFractalTessellation" layoutX="80.0" layoutY="492.0" mnemonicParsing="false" text="Fractal Tessellation algorithm" toggleGroup="$generateAlgorithm">
+        <RadioButton fx:id="rSidewinder" layoutX="80.0" layoutY="492.0" mnemonicParsing="false" onAction="#printAlgorithmDescription" text="Sidewinder algorithm" toggleGroup="$generateAlgorithm">
           <font>
             <Font name="Arial Black" size="24.0" />
           </font>

@@ -1,6 +1,8 @@
 package com.akknapik.mazesimulator;
 
 import com.akknapik.mazesimulator.MazeGenerateStrategy.MazeGeneratorFactory;
+import com.akknapik.mazesimulator.MazeSolveStrategy.DFSMazeSolver;
+import com.akknapik.mazesimulator.MazeSolveStrategy.MazeSolverFactory;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -34,7 +36,7 @@ public class MazeSimulatorController {
     private Scene scene;
 
     @FXML
-    private RadioButton rKruskal, rPrim, rDFS, rHaK, rEller, rAldousBroder, rGrowingTree, rFractalTessellation;
+    private RadioButton rKruskal, rPrim, rDFS, rHaK, rEller, rAldousBroder, rGrowingTree, rSidewinder;
 
     @FXML
     private TextField selectMazeSize;
@@ -100,6 +102,7 @@ public class MazeSimulatorController {
     private Maze maze;
     public int sizeOfMaze;
     private MazeGeneratorFactory mazeGeneratorFactory = new MazeGeneratorFactory();
+    private MazeSolverFactory mazeSolverFactory = new MazeSolverFactory();
     private Timeline timeline;
     private boolean changed = false;
 
@@ -154,7 +157,7 @@ public class MazeSimulatorController {
             descriptionText.getChildren().add(new Text("Aldous-Broder Algorithm: A maze generation algorithm that uses a random walk to ensure every cell is visited exactly once."));
         } else if (rGrowingTree.isSelected()) {
             descriptionText.getChildren().add(new Text("Growing Tree Algorithm: A maze generation algorithm that randomly selects cells from a growing list to carve paths."));
-        } else if (rFractalTessellation.isSelected()) {
+        } else if (rSidewinder.isSelected()) {
             descriptionText.getChildren().add(new Text("Backtracking Algorithm: A maze generation algorithm that builds paths by backtracking when a dead end is encountered."));
         }
     }
@@ -174,8 +177,8 @@ public class MazeSimulatorController {
             typeOfGeneratorAlgorithm = "aldousbroder";
         } else if (rGrowingTree.isSelected()) {
             typeOfGeneratorAlgorithm = "growingtree";
-        } else if (rFractalTessellation.isSelected()) {
-            typeOfGeneratorAlgorithm = "fractaltessellation";
+        } else if (rSidewinder.isSelected()) {
+            typeOfGeneratorAlgorithm = "sidewinder";
         } else {
             typeOfGeneratorAlgorithm = null;
         }
@@ -187,8 +190,6 @@ public class MazeSimulatorController {
             Node node = (Node) event.getSource();
             Stage tempStage = (Stage) node.getScene().getWindow();
             tempStage.close();
-
-            System.out.println(sizeOfMaze + " " + typeOfGeneratorAlgorithm);
 
             clearError();
             root = FXMLLoader.load(getClass().getResource("maze-simulator.fxml"));
@@ -210,11 +211,10 @@ public class MazeSimulatorController {
     }
 
     public void startSolver() {
-        MazeSolver solver = new MazeSolver(maze);
-        solver.solveUntilCorrect();
+        MazeSolver solver = new MazeSolver(maze, mazeSolverFactory.createStrategy("righthand"));
+        solver.solve();
 
         List<MazeSolution> allSolutions = solver.getAllSolutions();
-        MazeSolution correctSolution = solver.getCorrectSolution();
 
         maze.getStartCell();
         maze.getEndCell();
@@ -229,7 +229,7 @@ public class MazeSimulatorController {
                 showError("Maze size must be greater than 1.");
                 return false;
             } else if (sizeOfMaze > 25){
-                showError("Maze size can't be greater than 100.");
+                showError("Maze size can't be greater than 25.");
                 return false;
             }
             else {
@@ -289,7 +289,6 @@ public class MazeSimulatorController {
         DataRelay dataRelay = DataRelay.getInstance();
         MazeData mazeData = dataRelay.getMazeData();
 
-        //mazeSelector = new MazeSelector();
         mazePane = mazeSelector.createMazePane(mazeCanvas, mazeData.getSizeOfMaze(),
                 mazeGeneratorFactory.createStrategy(mazeData.getTypeOfAlgorithmGeneration()));
         chooseStartAndEnd();
@@ -385,7 +384,4 @@ public class MazeSimulatorController {
         maze = mazeSelector.getMaze();
         mazeContainer.getChildren().add(mazePane);
     }
-
-
-
 }
