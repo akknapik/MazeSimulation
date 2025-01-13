@@ -18,4 +18,9 @@ public class MazeSolution {
     public boolean isSolved() {
         return solved;
     }
+
+    @Override
+    public String toString() {
+        return "path=" + path + ", " + solved;
+    }
 }

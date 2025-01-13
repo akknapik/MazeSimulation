@@ -9,6 +9,7 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,7 +25,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class MazeSimulatorController {
 
@@ -90,10 +93,15 @@ public class MazeSimulatorController {
     private Label lSelectAlgorithm;
 
     @FXML
-    private ChoiceBox chbAlgorithm;
+    private ChoiceBox<String> chbAlgorithm;
 
     @FXML
     private Button bStartEnd;
+
+    @FXML
+    private Label selectError;
+
+    private String[] solveAlgorithms = {"Depth-First Search","Breadth-First Search","A*", "Dijkstra's algorithm"};
 
     public String typeOfGeneratorAlgorithm;
     private boolean startSelected = false;
@@ -108,7 +116,6 @@ public class MazeSimulatorController {
 
     @FXML
     public void initialize(ActionEvent event) throws IOException {
-
     }
 
     private void updateFooter() {
@@ -211,14 +218,40 @@ public class MazeSimulatorController {
     }
 
     public void startSolver() {
-        MazeSolver solver = new MazeSolver(maze, mazeSolverFactory.createStrategy("righthand"));
-        solver.solve();
+        String typeSolveAlgorithm = (String) chbAlgorithm.getValue();
+        String typeSolver;
+        if(typeSolveAlgorithm == "Depth-First Search") {
+            typeSolver = "dfs";
+        } else if (typeSolveAlgorithm == "Breadth-First Search") {
+            typeSolver = "bfs";
+        } else if (typeSolveAlgorithm == "A*") {
+            typeSolver = "astar";
+        } else if (typeSolveAlgorithm == "Dijkstra's algorithm") {
+            typeSolver = "dijkstra";
+        } else {
+            typeSolver = null;
+        }
+        if(validateSolvingAlgorithm(typeSolver)) {
+            System.out.println(typeSolver);
+            MazeSolver solver = new MazeSolver(maze, mazeSolverFactory.createStrategy(typeSolver));
+            solver.solve();
 
-        List<MazeSolution> allSolutions = solver.getAllSolutions();
+            List<MazeSolution> allSolutions = solver.getAllSolutions();
 
-        maze.getStartCell();
-        maze.getEndCell();
-        animateSolutions(allSolutions);
+            maze.getStartCell();
+            maze.getEndCell();
+            animateSolutions(allSolutions);
+        }
+    }
+
+    private boolean validateSolvingAlgorithm(String type) {
+        if(type == null) {
+            selectError.setVisible(true);
+            return false;
+        } else {
+            selectError.setVisible(false);
+            return true;
+        }
     }
 
     private boolean validateMazeSize() {
@@ -274,7 +307,7 @@ public class MazeSimulatorController {
         mazePane = mazeSelector.createMazePane(mazeCanvas, mazeData.getSizeOfMaze(),
                 mazeGeneratorFactory.createStrategy(mazeData.getTypeOfAlgorithmGeneration()));
         chooseStartAndEnd();
-
+        chbAlgorithm.getItems().addAll(solveAlgorithms);
     }
 
     public void regenerate() {

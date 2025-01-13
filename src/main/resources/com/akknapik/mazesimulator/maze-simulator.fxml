@@ -93,6 +93,11 @@
                   <Font size="14.0" />
                </font>
             </Button>
+            <Label fx:id="selectError" layoutX="577.0" layoutY="49.0" prefHeight="35.0" prefWidth="253.0" text="Choose algorithm! --&gt;" textAlignment="CENTER" textFill="RED" visible="false">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
    </bottom>

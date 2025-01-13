@@ -6,16 +6,13 @@ import com.akknapik.mazesimulator.MazeSolution;
 
 import java.util.*;
 
-public class BFSMazeSolver extends MazeSolverStrategy implements IMazeSolverStrategy{
-    private boolean isSolved = false;
-
+public class BFSMazeSolver extends MazeSolverStrategy implements IMazeSolverStrategy {
     @Override
     public List<MazeSolution> solveMaze(Maze maze) {
         List<MazeSolution> allSolutions = new ArrayList<>();
         Cell startCell = maze.getStartCell();
         Cell endCell = maze.getEndCell();
 
-        // Sprawdzamy, czy start i end są poprawnie ustawione
         checkStartEnd(startCell, endCell);
 
         Queue<Cell> queue = new LinkedList<>();
@@ -28,24 +25,24 @@ public class BFSMazeSolver extends MazeSolverStrategy implements IMazeSolverStra
 
         boolean foundSolution = false;
 
-        // BFS - przeszukiwanie w szerz
         while (!queue.isEmpty() && !foundSolution) {
             Cell current = queue.poll();
 
-            // Sprawdzanie sąsiadów
             for (Cell neighbor : maze.getNeighbors(current)) {
+                if (foundSolution) {
+                    break;
+                }
+
                 if (!visited.contains(neighbor)) {
                     visited.add(neighbor);
                     queue.offer(neighbor);
                     cameFrom.put(neighbor, current);
 
-                    // Jeśli dotarliśmy do komórki końcowej
                     if (neighbor.equals(endCell)) {
                         List<Cell> path = reconstructPath(cameFrom, startCell, endCell);
-                        allSolutions.add(new MazeSolution(path, true)); // Dodajemy rozwiązanie
-                        foundSolution = true;  // Zatrzymujemy dalsze przetwarzanie
+                        allSolutions.add(new MazeSolution(path, true));
+                        foundSolution = true;
                     } else {
-                        // Zapiszemy rozwiązanie (choć nie jest poprawne)
                         List<Cell> path = reconstructPath(cameFrom, startCell, neighbor);
                         allSolutions.add(new MazeSolution(path, false));
                     }
@@ -53,7 +50,6 @@ public class BFSMazeSolver extends MazeSolverStrategy implements IMazeSolverStra
             }
         }
 
-        // Jeśli nie znaleziono żadnego rozwiązania, dodajemy rozwiązanie "brak"
         if (allSolutions.isEmpty()) {
             allSolutions.add(new MazeSolution(new ArrayList<>(), false));
         }
@@ -61,17 +57,14 @@ public class BFSMazeSolver extends MazeSolverStrategy implements IMazeSolverStra
         return allSolutions;
     }
 
-    // Odtwarzanie ścieżki od końca do początku
     private List<Cell> reconstructPath(Map<Cell, Cell> cameFrom, Cell startCell, Cell endCell) {
         List<Cell> path = new ArrayList<>();
 
-        // Przechodzimy wstecz od komórki końcowej
         for (Cell cell = endCell; cell != null; cell = cameFrom.get(cell)) {
             path.add(cell);
         }
 
-        Collections.reverse(path); // Odwracamy ścieżkę, ponieważ była tworzona od końca
+        Collections.reverse(path);
         return path;
-
     }
 }
