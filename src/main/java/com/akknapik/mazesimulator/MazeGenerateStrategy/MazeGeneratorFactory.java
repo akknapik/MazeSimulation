@@ -8,7 +8,7 @@ public class MazeGeneratorFactory implements IMazeGeneratorFactory {
     private Map<String,Class<? extends IMazeGeneratorStrategy>> registeredStrategies = new HashMap<>();
 
     public MazeGeneratorFactory() {
-        registerStrategy("dfs", DFSMazeGenerator.class);
+        registerStrategy("backtracking", RecursiveBacktrackingMazeGenerator.class);
         registerStrategy("kruskal", KruskalMazeGenerator.class);
         registerStrategy("aldousbroder", AldousBroderMazeGenerator.class);
         registerStrategy("prim", PrimMazeGenerator.class);

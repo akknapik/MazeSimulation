@@ -1,7 +1,6 @@
 package com.akknapik.mazesimulator;
 
 import com.akknapik.mazesimulator.MazeGenerateStrategy.MazeGeneratorFactory;
-import com.akknapik.mazesimulator.MazeSolveStrategy.DFSMazeSolver;
 import com.akknapik.mazesimulator.MazeSolveStrategy.MazeSolverFactory;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -9,29 +8,27 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Objects;
 
 public class MazeSimulatorController {
 
-    private BorderPane borderPane;
     private Stage stage;
     private Parent root;
     private MazeSelector mazeSelector;
@@ -39,7 +36,7 @@ public class MazeSimulatorController {
     private Scene scene;
 
     @FXML
-    private RadioButton rKruskal, rPrim, rDFS, rHaK, rEller, rAldousBroder, rGrowingTree, rSidewinder;
+    private RadioButton rKruskal, rPrim, rBacktracking, rHaK, rEller, rAldousBroder, rGrowingTree, rSidewinder;
 
     @FXML
     private TextField selectMazeSize;
@@ -55,9 +52,6 @@ public class MazeSimulatorController {
 
     @FXML
     private Canvas mazeCanvas;
-
-    @FXML
-    private Pane footer;
 
     @FXML
     private Button bOK;
@@ -101,22 +95,16 @@ public class MazeSimulatorController {
     @FXML
     private Label selectError;
 
-    private String[] solveAlgorithms = {"Depth-First Search","Breadth-First Search","A*", "Dijkstra's algorithm"};
+    private final String[] solveAlgorithms = {"Depth-First Search","Breadth-First Search"};
 
     public String typeOfGeneratorAlgorithm;
     private boolean startSelected = false;
     private boolean endSelected = false;
-    private boolean firstOK = true;
     private Maze maze;
     public int sizeOfMaze;
-    private MazeGeneratorFactory mazeGeneratorFactory = new MazeGeneratorFactory();
-    private MazeSolverFactory mazeSolverFactory = new MazeSolverFactory();
+    private final MazeGeneratorFactory mazeGeneratorFactory = new MazeGeneratorFactory();
+    private final MazeSolverFactory mazeSolverFactory = new MazeSolverFactory();
     private Timeline timeline;
-    private boolean changed = false;
-
-    @FXML
-    public void initialize(ActionEvent event) throws IOException {
-    }
 
     private void updateFooter() {
         if (!startSelected || !endSelected) {
@@ -125,7 +113,6 @@ public class MazeSimulatorController {
             mazeContainer.setVisible(true);
             mazeCanvas.setVisible(true);
             bBack.setVisible(false);
-            bRegenerate.setVisible(false);
             lSelectAlgorithm.setVisible(false);
             chbAlgorithm.setVisible(false);
             bStart.setVisible(false);
@@ -138,7 +125,6 @@ public class MazeSimulatorController {
             mazeContainer.setVisible(true);
             mazeCanvas.setVisible(true);
             bBack.setVisible(true);
-            bRegenerate.setVisible(true);
             lSelectAlgorithm.setVisible(true);
             chbAlgorithm.setVisible(true);
             bStart.setVisible(true);
@@ -151,21 +137,80 @@ public class MazeSimulatorController {
     public void printAlgorithmDescription() {
         descriptionText.getChildren().clear();
         if (rKruskal.isSelected()) {
-            descriptionText.getChildren().add(new Text("Kruskal's Algorithm: This algorithm finds a minimum spanning tree by sorting edges by weight and adding them to the tree without forming a cycle."));
+            setDescriptionText("""
+                    Kruskal's Algorithm generates a maze by treating each edge between cells as a separate unit. The edges are sorted by weight and then added to the maze, connecting cells without forming a cycle. The algorithm picks the shortest available edge, and the process repeats until all cells are connected.
+
+                    Statistics:
+                    - Time Complexity: O(E log E), where E is the number of edges. The complexity depends on the \
+                    number of edges since the algorithm requires sorting all the edges.
+                    - Space Complexity: O(V + E), where V is the number of vertices (cells) and E is the number of \
+                    edges. The algorithm needs to store the edges and sets representing the connections.
+                    - Maze Type: The resulting mazes are very balanced, with evenly distributed connections, and all\
+                     walls are removed randomly.
+                    """);
         } else if (rPrim.isSelected()) {
-            descriptionText.getChildren().add(new Text("Prim's Algorithm: A greedy algorithm that builds a minimum spanning tree by starting with a single node and repeatedly adding the lowest-weight edge."));
-        } else if (rDFS.isSelected()) {
-            descriptionText.getChildren().add(new Text("Depth-First Search (DFS): An algorithm for traversing or searching tree or graph data structures by exploring as far as possible along each branch."));
+            setDescriptionText("""
+                    Prim's Algorithm generates a maze by starting from a random cell and incrementally adding new cells to the growing tree, avoiding cycles. The algorithm iteratively adds edges to the growing maze, ensuring that connections are created optimally.
+
+                    Statistics:
+                    - Time Complexity: O(E log V), where E is the number of edges and V is the number of vertices. The algorithm requires using a priority structure to select the shortest edge.
+                    - Space Complexity: O(V + E), as the algorithm needs to store all the vertices and edges in a graph structure.
+                    - Maze Type: Generates dense mazes with many short paths. The mazes tend to be more connected and simpler compared to other algorithms.
+                    """);
+        } else if (rBacktracking.isSelected()) {
+            setDescriptionText("""
+                    Recursive Backtracking generates a maze by starting at one cell and randomly exploring neighboring cells, creating walls along the way. When a dead-end is encountered, the algorithm backtracks to the last visited cell and continues. The process repeats until all cells are connected.
+
+                    Statistics:
+                    - Time Complexity: O(V + E), where V is the number of cells and E is the number of edges. This complexity depends on the number of visited cells and their connections.
+                    - Space Complexity: O(V), as the algorithm only needs to store the visited cells in a recursive stack.
+                    - Maze Type: Generates mazes with very interesting and difficult paths. This algorithm is quite 'chaotic,' resulting in mazes with a complex structure.
+                    """);
         } else if (rHaK.isSelected()) {
-            descriptionText.getChildren().add(new Text("Hunt-and-Kill Algorithm: A maze generation algorithm that randomly selects unvisited neighbors to connect paths."));
+            setDescriptionText("""
+                    Hunt and Kill is a combination of recursive and iterative techniques. It begins at a random cell and moves along unvisited neighboring cells. When a dead-end is encountered, the algorithm 'hunts' for other unvisited cells connected to already visited ones and continues.
+
+                    Statistics:
+                    - Time Complexity: O(V + E), but it can be slightly slower than Recursive Backtracking due to the additional 'hunting' step.
+                    - Space Complexity: O(V), as it only stores the visited cells and states in memory.
+                    - Maze Type: Creates mazes with a unique structure, often with branching corridors that can be easily closed at the end.
+                    """);
         } else if (rEller.isSelected()) {
-            descriptionText.getChildren().add(new Text("Eller's Algorithm: A maze generation algorithm that works row by row and maintains sets of connected cells."));
+            setDescriptionText("""
+                    Eller's Algorithm operates iteratively, creating maze levels one by one. At each level, the algorithm connects cells, making connections only where possible, and then moves to the next level to continue the process. It is efficient because it works level by level rather than analyzing the entire grid.
+
+                    Statistics:
+                    - Time Complexity: O(V), where V is the number of cells in the maze. This is very efficient compared to other algorithms.
+                    - Space Complexity: O(V), as it only stores the currently active levels.
+                    - Maze Type: The mazes created by Eller’s Algorithm have an interesting structure with clearly separated levels, and distinct transitions between levels.
+                    """);
         } else if (rAldousBroder.isSelected()) {
-            descriptionText.getChildren().add(new Text("Aldous-Broder Algorithm: A maze generation algorithm that uses a random walk to ensure every cell is visited exactly once."));
+            setDescriptionText("""
+                    The Aldous-Broder Algorithm is a random algorithm that explores all the cells in the maze. It starts at a random cell and moves to neighboring cells, making connections. If the cell has already been visited, it chooses another cell until all cells are connected.
+
+                    Statistics:
+                    - Time Complexity: O(V * E), where V is the number of cells and E is the number of edges. This can lead to long execution times, especially for larger mazes.
+                    - Space Complexity: O(V), as the algorithm only needs to store the visited cells.
+                    - Maze Type: Generates mazes with highly random and unique structures that can have interesting and unpredictable geometry.
+                    """);
         } else if (rGrowingTree.isSelected()) {
-            descriptionText.getChildren().add(new Text("Growing Tree Algorithm: A maze generation algorithm that randomly selects cells from a growing list to carve paths."));
+            setDescriptionText("""
+                    The Growing Tree Algorithm is a flexible approach that uses various techniques to generate the maze. It starts from one cell and 'grows,' creating new cells and adding them to the growing structure. The choice of the next cell can be random or based on some criteria.
+
+                    Statistics:
+                    - Time Complexity: O(V + E), similar to other graph-based algorithms.
+                    - Space Complexity: O(V), as the algorithm only stores the currently visited cells.
+                    - Maze Type: Creates mazes with diverse structures and many possible corridors that are generated on the fly.
+                    """);
         } else if (rSidewinder.isSelected()) {
-            descriptionText.getChildren().add(new Text("Backtracking Algorithm: A maze generation algorithm that builds paths by backtracking when a dead end is encountered."));
+            setDescriptionText("""
+                    The Sidewinder Algorithm works iteratively, creating horizontal connections in the maze and then deciding whether to connect two cells on the same level or move to a higher level. The defining feature is that some connections are made 'outward,' leading to interesting branch-offs.
+
+                    Statistics:
+                    - Time Complexity: O(V + E), as it works similarly to other level-based algorithms.
+                    - Space Complexity: O(V), as it only stores information about the levels.
+                    - Maze Type: Generates mazes with many horizontal corridors and branch-offs that give the maze a distinctive structure.
+                    """);
         }
     }
 
@@ -174,8 +219,8 @@ public class MazeSimulatorController {
             typeOfGeneratorAlgorithm = "kruskal";
         } else if (rPrim.isSelected()) {
             typeOfGeneratorAlgorithm = "prim";
-        } else if (rDFS.isSelected()) {
-            typeOfGeneratorAlgorithm = "dfs";
+        } else if (rBacktracking.isSelected()) {
+            typeOfGeneratorAlgorithm = "backtracking";
         } else if (rHaK.isSelected()) {
             typeOfGeneratorAlgorithm = "hak";
         } else if (rEller.isSelected()) {
@@ -199,7 +244,7 @@ public class MazeSimulatorController {
             tempStage.close();
 
             clearError();
-            root = FXMLLoader.load(getClass().getResource("maze-simulator.fxml"));
+            root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("maze-simulator.fxml")));
             DataRelay dataRelay = DataRelay.getInstance();
             dataRelay.setMazeData(mazeData);
             stage = (Stage)((Node) event.getSource()).getScene().getWindow();
@@ -210,7 +255,7 @@ public class MazeSimulatorController {
     }
 
     public void backToAlgorithms(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("algorithm-selection.fxml"));
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("algorithm-selection.fxml")));
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
@@ -218,16 +263,12 @@ public class MazeSimulatorController {
     }
 
     public void startSolver() {
-        String typeSolveAlgorithm = (String) chbAlgorithm.getValue();
+        String typeSolveAlgorithm = chbAlgorithm.getValue();
         String typeSolver;
         if(typeSolveAlgorithm == "Depth-First Search") {
             typeSolver = "dfs";
         } else if (typeSolveAlgorithm == "Breadth-First Search") {
             typeSolver = "bfs";
-        } else if (typeSolveAlgorithm == "A*") {
-            typeSolver = "astar";
-        } else if (typeSolveAlgorithm == "Dijkstra's algorithm") {
-            typeSolver = "dijkstra";
         } else {
             typeSolver = null;
         }
@@ -295,6 +336,7 @@ public class MazeSimulatorController {
     }
 
     public void changeVisibleScene() {
+        bRegenerate.setVisible(false);
         bOK.setVisible(false);
         footerText.setVisible(false);
         footerStatusText.setVisible(false);
@@ -328,6 +370,8 @@ public class MazeSimulatorController {
     }
 
     public void chooseStartAndEnd() {
+        bRegenerate.setVisible(true);
+
         if(maze != null) {
             resetSolutions();
         }
@@ -348,7 +392,6 @@ public class MazeSimulatorController {
         mazeSelector.setOnEndSelected(() -> {
             endSelected = true;
             updateFooter();
-            changed = true;
         });
     }
 
@@ -416,5 +459,21 @@ public class MazeSimulatorController {
         mazePane = mazeSelector.resetMaze(mazeCanvas, maze);
         maze = mazeSelector.getMaze();
         mazeContainer.getChildren().add(mazePane);
+    }
+
+    private void setDescriptionText(String text) {
+        descriptionText.getChildren().clear();
+
+        Text description = new Text(text);
+
+        description.setFont(Font.font("Bahnschrift", 28));
+
+        description.setTextAlignment(TextAlignment.CENTER);
+
+        descriptionText.setPrefWidth(1000);
+
+        descriptionText.setTextAlignment(TextAlignment.CENTER);
+
+        descriptionText.getChildren().add(description);
     }
 }

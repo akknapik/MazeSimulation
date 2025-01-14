@@ -47,12 +47,12 @@
    <bottom>
       <Pane fx:id="footer" prefHeight="105.0" prefWidth="1920.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="bBack" layoutX="23.0" layoutY="28.0" mnemonicParsing="false" onAction="#backToAlgorithms" text="Back to Generation Algorithms" visible="false">
+            <Button fx:id="bBack" layoutX="199.0" layoutY="28.0" mnemonicParsing="false" onAction="#backToAlgorithms" text="Back to Generation Algorithms" visible="false">
                <font>
                   <Font size="24.0" />
                </font>
             </Button>
-            <Button fx:id="bRegenerate" layoutX="402.0" layoutY="28.0" mnemonicParsing="false" onAction="#regenerate" text="Regenerate" visible="false">
+            <Button fx:id="bRegenerate" layoutX="23.0" layoutY="28.0" mnemonicParsing="false" onAction="#regenerate" text="Regenerate" visible="false">
                <font>
                   <Font size="24.0" />
                </font>
@@ -88,7 +88,7 @@
                   <Font name="Arial Black" size="24.0" />
                </font>
             </Label>
-            <Button fx:id="bStartEnd" layoutX="1575.0" layoutY="31.0" mnemonicParsing="false" onAction="#chooseStartAndEnd" prefHeight="46.0" prefWidth="288.0" text="Choose the beginning and the end again." visible="false">
+            <Button fx:id="bStartEnd" layoutX="1572.0" layoutY="31.0" mnemonicParsing="false" onAction="#chooseStartAndEnd" prefHeight="46.0" prefWidth="288.0" text="Choose the beginning and the end again." visible="false">
                <font>
                   <Font size="14.0" />
                </font>

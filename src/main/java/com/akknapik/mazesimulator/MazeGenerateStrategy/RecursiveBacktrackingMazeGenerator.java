@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
-public class DFSMazeGenerator extends MazeGeneratorStrategy implements IMazeGeneratorStrategy {
+public class RecursiveBacktrackingMazeGenerator extends MazeGeneratorStrategy implements IMazeGeneratorStrategy {
     @Override
     public void generateMaze(Cell[][] grid) {
         Stack<Cell> stack = new Stack<>();
