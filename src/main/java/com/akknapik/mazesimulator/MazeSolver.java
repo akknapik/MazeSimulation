@@ -8,7 +8,7 @@ import java.util.List;
 public class MazeSolver {
     private Maze maze;
     private IMazeSolverStrategy mazeSolverStrategy;
-    private List<MazeSolution> allSolutions;
+    private static List<MazeSolution> allSolutions;
     private MazeSolution correctSolution;
 
     public MazeSolver(Maze maze, IMazeSolverStrategy mazeSolverStrategy) {
@@ -32,13 +32,7 @@ public class MazeSolver {
         return allSolutions;
     }
 
-    public MazeSolution getCorrectSolution() {
-        return correctSolution;
-    }
-
-    public void printSolutions() {
-        for(MazeSolution mazeSolution : allSolutions) {
-            System.out.println(mazeSolution);
-        }
+    public static IMazeSolutionIterator iterator() {
+        return new SolutionIterator(allSolutions);
     }
 }

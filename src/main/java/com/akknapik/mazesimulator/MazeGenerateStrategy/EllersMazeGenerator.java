@@ -10,18 +10,15 @@ public class EllersMazeGenerator extends MazeGeneratorStrategy implements IMazeG
     public void generateMaze(Cell[][] grid) {
         int rows = grid.length;
         int cols = grid[0].length;
-        int setCounter = 1; // Licznik zestawów
+        int setCounter = 1;
 
-        // Inicjalizacja pierwszego wiersza
         for (int col = 0; col < cols; col++) {
             grid[0][col].setSetID(setCounter++);
         }
 
-        // Generowanie wierszy
         for (int row = 0; row < rows; row++) {
-            // 1. Łączenie sąsiednich komórek w wierszu
             for (int col = 0; col < cols - 1; col++) {
-                if (Math.random() < 0.5) { // Losowa decyzja
+                if (Math.random() < 0.5) {
                     Cell current = grid[row][col];
                     Cell next = grid[row][col + 1];
                     if (current.getSetID() != next.getSetID()) {
@@ -31,7 +28,6 @@ public class EllersMazeGenerator extends MazeGeneratorStrategy implements IMazeG
                 }
             }
 
-            // 2. Tworzenie pionowych połączeń
             if (row < rows - 1) {
                 Map<Integer, List<Integer>> setMap = new HashMap<>();
                 for (int col = 0; col < cols; col++) {
@@ -54,7 +50,6 @@ public class EllersMazeGenerator extends MazeGeneratorStrategy implements IMazeG
                 }
             }
 
-            // 3. Aktualizacja zestawów w nowym wierszu
             if (row < rows - 1) {
                 for (int col = 0; col < cols; col++) {
                     if (grid[row + 1][col].getSetID() == -1) {
@@ -64,7 +59,6 @@ public class EllersMazeGenerator extends MazeGeneratorStrategy implements IMazeG
             }
         }
 
-        // 4. Łączenie zestawów w ostatnim wierszu
         Cell[] lastRow = grid[rows - 1];
         for (int col = 0; col < cols - 1; col++) {
             if (lastRow[col].getSetID() != lastRow[col + 1].getSetID()) {

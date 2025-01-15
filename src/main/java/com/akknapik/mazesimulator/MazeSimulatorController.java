@@ -410,8 +410,11 @@ public class MazeSimulatorController {
 
         if (timeline == null) {
             timeline = new Timeline();
-            for (int i = 0; i < allSolutions.size(); i++) {
-                MazeSolution solution = allSolutions.get(i);
+            IMazeSolutionIterator iterator = MazeSolver.iterator();
+
+            int i = 0;
+            while (iterator.hasNext()) {
+                MazeSolution solution = iterator.next();
                 List<Cell> path = solution.getPath();
                 boolean isCorrect = solution.isSolved();
 
@@ -432,6 +435,7 @@ public class MazeSimulatorController {
 
                     timeline.getKeyFrames().add(frame);
                 }
+                i++;
             }
         }
 
@@ -463,17 +467,11 @@ public class MazeSimulatorController {
 
     private void setDescriptionText(String text) {
         descriptionText.getChildren().clear();
-
         Text description = new Text(text);
-
         description.setFont(Font.font("Bahnschrift", 28));
-
         description.setTextAlignment(TextAlignment.CENTER);
-
         descriptionText.setPrefWidth(1000);
-
         descriptionText.setTextAlignment(TextAlignment.CENTER);
-
         descriptionText.getChildren().add(description);
     }
 }

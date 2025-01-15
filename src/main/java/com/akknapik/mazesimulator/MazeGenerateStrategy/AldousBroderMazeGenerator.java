@@ -1,8 +1,6 @@
 package com.akknapik.mazesimulator.MazeGenerateStrategy;
 
 import com.akknapik.mazesimulator.Cell;
-import com.akknapik.mazesimulator.Maze;
-import com.akknapik.mazesimulator.State.UnvisitedState;
 import com.akknapik.mazesimulator.State.VisitedState;
 
 import java.util.List;

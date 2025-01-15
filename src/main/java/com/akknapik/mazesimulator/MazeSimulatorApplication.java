@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 public class MazeSimulatorApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        //FXMLLoader loader = new FXMLLoader(getClass().getResource("maze-simulator.fxml"));
         Parent root = FXMLLoader.load(getClass().getResource("algorithm-selection.fxml"));
         Scene scene1 = new Scene(root);
         stage.setScene(scene1);
